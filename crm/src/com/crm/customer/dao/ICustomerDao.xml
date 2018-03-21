@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crm.customer.dao.ICustomerDao">
+	<select id="selectCustomerList" resultType="Customer">
+		select 
+			cust_id,
+			cust_name,
+			cust_user_id,
+			cust_create_id,
+			b.dict_item_name cust_source,
+			c.dict_item_name cust_industry,
+			d.dict_item_name cust_level,
+			cust_linkman,
+			cust_phone,
+			cust_mobile,
+			cust_createtime
+		from
+			customer a
+		left join(
+			select 
+				dict_id,
+				dict_item_name
+			from
+				dict
+			where 
+				dict_type_code='002'
+			) b on a.cust_source = b.dict_id
+		left join(
+				select 
+					dict_id,
+					dict_item_name
+				from
+					dict
+				where 
+					dict_type_code='001'
+			) c on a.cust_industry = c.dict_id
+		left join(
+				select 
+					dict_id,
+					dict_item_name
+				from
+					dict
+				where 
+					dict_type_code='003'
+			) d on a.cust_level = d.dict_id 
+		<where>
+			<if test="cust_name!=null">
+				cust_name like "%"#{cust_name}"%"
+			</if>
+			<if test="cust_source!=null">
+				and cust_source=#{cust_source}
+			</if>
+			<if test="cust_industry!=null">
+				and cust_industry=#{cust_industry}
+			</if>
+			<if test="cust_level!=null">
+				and cust_level=#{cust_level}
+			</if>
+		</where>
+		<if test="start!=null and rows!=null">
+			limit #{start},#{rows}
+		</if>			
+	</select>
+	<select id="setCustomerListCount" resultType="Integer">
+		select count(*) from customer
+		<where>
+			<if test="cust_name!=null">
+				cust_name like "%"#{cust_name}"%"
+			</if>
+			<if test="cust_source!=null">
+				and cust_source=#{cust_source}
+			</if>
+			<if test="cust_industry!=null">
+				and cust_industry=#{cust_industry}
+			</if>
+			<if test="cust_level!=null">
+				and cust_level=#{cust_level}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insertCustomer">
+		insert into customer 
+			(cust_id,
+			cust_name,
+			cust_user_id,
+			cust_create_id,
+			cust_source,
+			cust_industry,
+			cust_level,
+			cust_linkman,
+			cust_phone,
+			cust_mobile,
+			cust_createtime)
+			values(
+				#{cust_id},
+				#{cust_name},
+				#{cust_user_id},
+				#{cust_create_id},
+				#{cust_source},
+				#{cust_industry},
+				#{cust_level},
+				#{cust_linkman},
+				#{cust_phone},
+				#{cust_mobile},
+				#{cust_createtime}
+			)
+	</insert>
+	
+	<select id="selectCustomerById" resultType="Customer">
+		select * from customer where cust_id=#{id}
+	</select>
+	
+	<update id="updateCustomer">
+		update customer 
+		<set>
+			<if test="cust_name != null">
+				cust_name=#{cust_name},
+			</if>
+			<if test="cust_user_id != null">
+				cust_user_id = #{cust_user_id},
+			</if>
+			<if test="cust_create_id != null">
+				cust_create_id = #{cust_create_id},
+			</if>
+			<if test="cust_source != null">
+				cust_source = #{cust_source},
+			</if>
+			<if test="cust_industry != null">
+				cust_industry = #{cust_industry},
+			</if>
+			<if test="cust_level != null">
+				cust_level = #{cust_level},
+			</if>
+			<if test="cust_linkman != null">
+				cust_linkman = #{cust_linkman},
+			</if>
+			<if test="cust_phone != null">
+				cust_phone = #{cust_phone},
+			</if>
+			<if test="cust_mobile != null">
+				cust_mobile = #{cust_mobile},
+			</if>
+			<if test="cust_createtime != null">
+				cust_createtime = #{cust_createtime}
+			</if>
+		</set>
+		where cust_id = #{cust_id}
+	</update>
+	
+	<delete id="deleteCustomerById">
+		delete from customer where cust_id=#{id}
+	</delete>
+	
+	
+</mapper>
